@@ -146,8 +146,6 @@ exports.getAllApplyJob = async (req, res) => {
             .find()
             .populate('jobReference');
 
-       
-
         return res.status(200).json({
             message: 'Successfully retrieved all applied job data',
             data: allApplyJob,

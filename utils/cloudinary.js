@@ -12,7 +12,7 @@ cloudinary.config({
 
 const uploadFile = async (filePath, wrocusTech) => {  // //wrocuTech is foldername
     try {
-        const uploadResult = await cloudinary.uploader.upload(filePath, {folder: wrocusTech });
+        const uploadResult = await cloudinary.uploader.upload(filePath, {folder: wrocusTech,resource_type:'auto'});
         return uploadResult;
 
     } catch (error) {
