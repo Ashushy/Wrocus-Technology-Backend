@@ -122,7 +122,7 @@ exports.applyJob = async (req, res) => {
             resume: fileResult.url,
             jobReference: selectedJobId,
         });
-        
+
         await applyData.save();
         return res.status(201).json({
             message: "Applied successfully",
@@ -146,15 +146,11 @@ exports.getAllApplyJob = async (req, res) => {
             .find()
             .populate('jobReference');
 
-        // Construct full resume URL for each applied job
-        const applyJobsWithResume = allApplyJob.map((applyJob) => ({
-            ...applyJob._doc, // Spread the document fields into a plain object
-            resume: `${req.protocol}://${req.get('host')}/uploads/${path.basename(applyJob.resume)}`, // Full resume URL
-        }));
+       
 
         return res.status(200).json({
             message: 'Successfully retrieved all applied job data',
-            data: applyJobsWithResume,
+            data: allApplyJob,
         });
     } catch (error) {
         return res.status(500).json({
