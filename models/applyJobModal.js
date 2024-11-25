@@ -16,8 +16,14 @@ const applyJobSchema = new mongoose.Schema({
         required: true
     },
     resume: {
-        type: String,
-        required: true
+        secure_url:{
+            type:String,
+            required:true
+        },
+        public_id:{
+            type:String,
+            required:true
+        }
     },
     jobReference: {
         type: mongoose.Schema.Types.ObjectId,

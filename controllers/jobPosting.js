@@ -107,37 +107,53 @@ exports.getAlljob = async (req, res) => {
 exports.applyJob = async (req, res) => {
     try {
         const { name, email, noticeperiod, selectedJobId } = req.body;
-        const file = req.file.path;
+        const file = req.file.path; // File from multer middleware
+        
+        // Check if all fields are present
         if (!name || !email || !noticeperiod || !file || !selectedJobId) {
             return res.status(400).json({
-                message: "All fields are required"
-            })
+                message: "All fields are required",
+            });
         }
-        const fileResult = await uploadFile(file, 'wrocusTech')
 
+        // Upload the file to Cloudinary
+        const fileResult = await uploadFile(file);
+
+        // Create a new job application record
         const applyData = new jobApplyModel({
             name,
             email,
             noticeperiod,
-            resume: fileResult.url,
+            resume: {
+                secure_url: fileResult.url ?? '', // Link to view/download 
+                public_id: fileResult.public_id, // Cloudinary identifier
+            },
             jobReference: selectedJobId,
         });
 
+        // Save the application to the database
         await applyData.save();
+
         return res.status(201).json({
             message: "Applied successfully",
-            data: applyData
-        })
-
+            data: {
+                id: applyData._id,
+                name: applyData.name,
+                email: applyData.email,
+                noticeperiod: applyData.noticeperiod,
+                resume: applyData.resume,
+                jobReference: applyData.jobReference,
+            },
+        });
     } catch (error) {
-        console.error(error)
+        console.error(error);
         return res.status(500).json({
-            message: 'Internal server error',
-            message: error
-        })
-
+            message: "Internal server error",
+            error: error.message,
+        });
     }
-}
+};
+
 
 exports.getAllApplyJob = async (req, res) => {
     try {
@@ -230,6 +246,24 @@ exports.deleteJobPost = async (req, res) => {
         });
     }
 }
-
+exports.getResume = async (req, res) => {
+    try {
+        const { userID } = req.params || {}
+        // Fetch all applied jobs and populate the jobReference field
+        const resumeData = await jobApplyModel
+            .findOne({_id: userID})
+        console.log('resumeData', resumeData);
+        
+        return res.status(200).json({
+            isSuccess: true,
+            data: resumeData.resume,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: 'Internal server error',
+            error: error.message,
+        });
+    }
+};
 
 
