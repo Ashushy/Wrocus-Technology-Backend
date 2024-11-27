@@ -266,4 +266,29 @@ exports.getResume = async (req, res) => {
     }
 };
 
+exports.deleteAppliedJob=async(req,res)=>{
+try {
+    const {id}=req.params
+    if(!id)
+    {
+        return res.status(404).json({
+            message:"id not found"
+        })
+    }
+    const response=await jobApplyModel.findByIdAndUpdate(id)
+    return res.status(200).json({
+        isSuccess:true,
+        message:"Applied job deleted successfully"
+    })
+    
+} catch (error) {
+    res.status(500).json({
+        isSuccess:false,
+        error:error.message
+    })
+}
+   
+
+}
+
 
