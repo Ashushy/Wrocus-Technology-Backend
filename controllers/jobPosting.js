@@ -108,7 +108,7 @@ exports.applyJob = async (req, res) => {
     try {
         const { name, email, noticeperiod, selectedJobId } = req.body;
         const file = req.file.path; // File from multer middleware
-        
+
         // Check if all fields are present
         if (!name || !email || !noticeperiod || !file || !selectedJobId) {
             return res.status(400).json({
@@ -251,9 +251,9 @@ exports.getResume = async (req, res) => {
         const { userID } = req.params || {}
         // Fetch all applied jobs and populate the jobReference field
         const resumeData = await jobApplyModel
-            .findOne({_id: userID})
+            .findOne({ _id: userID })
         console.log('resumeData', resumeData);
-        
+
         return res.status(200).json({
             isSuccess: true,
             data: resumeData.resume,
@@ -266,28 +266,29 @@ exports.getResume = async (req, res) => {
     }
 };
 
-exports.deleteAppliedJob=async(req,res)=>{
-try {
-    const {id}=req.params
-    if(!id)
-    {
-        return res.status(404).json({
-            message:"id not found"
+exports.deleteAppliedJob = async (req, res) => {
+    try {
+        const { id } = req.params
+        if (!id) {
+            return res.status(404).json({
+                message: "id not found"
+            })
+        }
+        const response = await jobApplyModel.findByIdAndDelete(id)
+        return res.status(200).json({
+            isSuccess: true,
+            message: "Applied job deleted successfully",
+            response
+
+        })
+
+    } catch (error) {
+        res.status(500).json({
+            isSuccess: false,
+            error: error.message
         })
     }
-    const response=await jobApplyModel.findByIdAndUpdate(id)
-    return res.status(200).json({
-        isSuccess:true,
-        message:"Applied job deleted successfully"
-    })
-    
-} catch (error) {
-    res.status(500).json({
-        isSuccess:false,
-        error:error.message
-    })
-}
-   
+
 
 }
 
