@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
-const JobPosting = require('./jobPosting');  // Assuming JobPosting model is imported
+const JobPosting = require('./jobPosting');  
 
-// Define the ApplyJob schema
 const applyJobSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -11,7 +10,29 @@ const applyJobSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    date: {
+        type: Date,
+        required: true
+    },
     noticeperiod: {
+        type: String,
+        required: true
+    },
+    contactNumber: {
+        type: String,
+        required:true
+    },
+
+    currentCTC: {
+            type: String,
+            required: true
+    },
+    
+    expectedCTC: {
+        type: String,
+        required: true
+    },
+    currentOrganization: {
         type: String,
         required: true
     },
@@ -30,9 +51,10 @@ const applyJobSchema = new mongoose.Schema({
         ref: 'JobPosting',
         required: true
     }
-});
+},{
+    timestamps: true
+  });
 
-// Create the AppliedJob model
 const jobApplyModel = mongoose.model('AppliedJob', applyJobSchema);
 
 module.exports = jobApplyModel;

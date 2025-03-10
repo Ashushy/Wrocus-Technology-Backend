@@ -21,41 +21,41 @@ exports.jobPosting = async (req, res) => {
         benefit,
     } = req.body
 
+    // Prepare the data to be saved
+    const jobData = {
+        job_title: jobTitle,
+        job_description: jobDescription,
+        location,
+        job_type: workMode,
+        salary: salary || null, // If salary is not provided, set it to null
+        company,
+        contact_email: email||null,
+        application_deadline: applicationDeadLine,
+        skill,
+        experience_level: experience,
+        job_category: jobCategory,
+        benefit: benefit || null // If benefit is not provided, set it to null
+    }
+
     try {
-        const createJobs = await JobPosting({
-            job_title: jobTitle,
-            job_description: jobDescription,
-            location,
-            job_type: workMode,
-            salary,
-            company,
-            contact_email: email,
-            application_deadline: applicationDeadLine,
-            skill,
-            experience_level: experience,
-            job_category: jobCategory,
-            benefit: benefit
-        })
+        const createJobs = await JobPosting(jobData)
         await createJobs.save()
 
         return res.status(201).json({
             success: true,
-            message: "Job created successfuly",
+            message: "Job created successfully",
             data: createJobs
-
         })
 
     } catch (error) {
-        console.error('error occured', error)
+        console.error('Error occurred', error)
         return res.status(500).json({
             success: false,
             message: error.message,
-
-
         })
     }
-
 }
+
 
 // get all job
 exports.getAlljob = async (req, res) => {
@@ -103,14 +103,15 @@ exports.getAlljob = async (req, res) => {
     }
 };
 
-
+//apply job
 exports.applyJob = async (req, res) => {
+    console.log("form submission",req.body)
     try {
-        const { name, email, noticeperiod, selectedJobId } = req.body;
+        const { name, email,date, noticeperiod,contactNumber,currentCTC, expectedCTC,currentOrganization, selectedJobId } = req.body;
         const file = req.file.path; // File from multer middleware
 
         // Check if all fields are present
-        if (!name || !email || !noticeperiod || !file || !selectedJobId) {
+        if (!name || !email || !date ||  !noticeperiod || !file || !contactNumber || !currentCTC || !expectedCTC || !currentOrganization ||  !selectedJobId) {
             return res.status(400).json({
                 message: "All fields are required",
             });
@@ -123,6 +124,11 @@ exports.applyJob = async (req, res) => {
         const applyData = new jobApplyModel({
             name,
             email,
+            date,
+            contactNumber,
+            currentCTC,
+            expectedCTC,
+            currentOrganization,
             noticeperiod,
             resume: {
                 secure_url: fileResult.url ?? '', // Link to view/download 
@@ -140,6 +146,11 @@ exports.applyJob = async (req, res) => {
                 id: applyData._id,
                 name: applyData.name,
                 email: applyData.email,
+                date: applyData.date,
+                contactNumber: applyData.ContactNumber,
+                currentCTC: applyData.CurrentCTC,
+                expectedCTC: applyData.ExpectedCTC,
+                currentOrganization: applyData. CurrentOrganization,
                 noticeperiod: applyData.noticeperiod,
                 resume: applyData.resume,
                 jobReference: applyData.jobReference,
@@ -154,17 +165,48 @@ exports.applyJob = async (req, res) => {
     }
 };
 
+// getallappliedjob
+// exports.getAllApplyJob = async (req, res) => {
+//     try {
+//         const allApplyJob = await jobApplyModel.find().populate('jobReference').sort({createdAt:-1});
+
+//         console.log("Fetched Jobs:", allApplyJob); 
+
+//         return res.status(200).json({
+//             message: 'Successfully retrieved all applied job data',
+//             data:allApplyJob});
+//     } catch (error) {
+//         return res.status(500).json({
+//             message: 'Internal server error',
+//             error: error.message,
+//         });
+//     }
+// };
 
 exports.getAllApplyJob = async (req, res) => {
     try {
-        // Fetch all applied jobs and populate the jobReference field
+        // Get page and limit from query parameters, set default values
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const skip = (page - 1) * limit;
+
+        // Fetch total count of documents (for frontend pagination)
+        const totalJobs = await jobApplyModel.countDocuments();
+
+        // Fetch jobs with pagination
         const allApplyJob = await jobApplyModel
             .find()
-            .populate('jobReference');
+            .populate('jobReference')
+            .sort({ createdAt: -1 })
+            .skip(skip)
+            .limit(limit);
 
         return res.status(200).json({
-            message: 'Successfully retrieved all applied job data',
+            message: 'Successfully retrieved applied job data',
             data: allApplyJob,
+            currentPage: page,
+            totalPages: Math.ceil(totalJobs / limit),
+            totalJobs,
         });
     } catch (error) {
         return res.status(500).json({
@@ -174,6 +216,9 @@ exports.getAllApplyJob = async (req, res) => {
     }
 };
 
+
+
+//update job
 exports.updateJobPost = async (req, res) => {
     try {
         const { id } = req.params;
@@ -224,6 +269,7 @@ exports.updateJobPost = async (req, res) => {
     }
 };
 
+//delete job
 exports.deleteJobPost = async (req, res) => {
     try {
         const jobId = req.params.id
@@ -246,6 +292,7 @@ exports.deleteJobPost = async (req, res) => {
         });
     }
 }
+//get resume
 exports.getResume = async (req, res) => {
     try {
         const { userID } = req.params || {}
@@ -266,6 +313,7 @@ exports.getResume = async (req, res) => {
     }
 };
 
+// delete apply job
 exports.deleteAppliedJob = async (req, res) => {
     try {
         const { id } = req.params

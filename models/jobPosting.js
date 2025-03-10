@@ -51,7 +51,7 @@ const jobPostingSchema = new mongoose.Schema({
     },
     benefit: {
         type: String,
-        required: true
+        // required: true
     }
 },
     {
