@@ -17,15 +17,15 @@ const path = require('path');
 // ✅ Configure Database Connection
 async function configureDatabase() {
     try {
-        const connect = await mongoose.connect("mongodb+srv://rkumar1:rahul347@cluster0.zi2jyje.mongodb.net/wrocuswebsite", {
-            useNewUrlParser: true,
-            useUnifiedTopology: true
-        });
-           
-        // const connect = await mongoose.connect("mongodb+srv://AAAAAA:wrocus@123@cluster0.ievh0.mongodb.net/", {
+        // const connect = await mongoose.connect("mongodb+srv://rkumar1:rahul347@cluster0.zi2jyje.mongodb.net/wrocuswebsite", {
         //     useNewUrlParser: true,
         //     useUnifiedTopology: true
         // });
+           
+        const connect = await mongoose.connect("mongodb://localhost:27017", {
+            useNewUrlParser: true,
+            useUnifiedTopology: true
+        });
         if (connect) {
             console.log('✅ Database connected successfully');
         }
