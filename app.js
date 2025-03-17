@@ -22,7 +22,7 @@ async function configureDatabase() {
         //     useUnifiedTopology: true
         // });
            
-        const connect = await mongoose.connect("mongodb://localhost:27017", {
+        const connect = await mongoose.connect("mongodb+srv://aseem:jRLYMTbs3nLB004f@wrocuswebsite.mlaja.mongodb.net/?retryWrites=true&w=majority&appName=wrocuswebsite", {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
