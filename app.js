@@ -38,12 +38,7 @@ function configureBodyParser() {
     app.use(express.json());
 
     // 🔹 Configure CORS properly
-    app.use(cors({
-        origin: "http://localhost:3000",  // 🔹 Change this to match your frontend URL
-        methods: ["GET", "POST", "PUT", "DELETE"],
-        allowedHeaders: ["Content-Type", "Authorization"],
-        credentials: true
-    }));
+    app.use(cors());
 
     // Serve static files (if needed)
     app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
