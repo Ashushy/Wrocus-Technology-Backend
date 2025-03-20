@@ -17,15 +17,13 @@ const path = require('path');
 // ✅ Configure Database Connection
 async function configureDatabase() {
     try {
-        // const connect = await mongoose.connect("mongodb+srv://rkumar1:rahul347@cluster0.zi2jyje.mongodb.net/wrocuswebsite", {
-        //     useNewUrlParser: true,
-        //     useUnifiedTopology: true
-        // });
-           
-        const connect = await mongoose.connect("mongodb+srv://aseem:jRLYMTbs3nLB004f@wrocuswebsite.mlaja.mongodb.net/?retryWrites=true&w=majority&appName=wrocuswebsite", {
+        const connect = await mongoose.connect("mongodb+srv://zafarekhlaque:4A7CGjSH1traEjeb@cluster0.sr9t9.mongodb.net/", {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
+        const password = encodeURIComponent("wrocus@123");
+           
+        // const connect = await mongoose.connect('mongodb+srv://zafarekhlaque:4A7CGjSH1traEjeb@cluster0.sr9t9.mongodb.net/Cluster0');
         if (connect) {
             console.log('✅ Database connected successfully');
         }
