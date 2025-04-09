@@ -65,7 +65,7 @@ exports.getAlljob = async (req, res) => {
 
         const filters = {};
         if (location) {
-            filters.location = { $regex: location, $options: 'i' };//case insensitive
+            filters.location = { $regex: location, $options: 'i' };
         }
         if (experience_level) {
             filters.experience_level = { $regex: experience_level, $options: 'i' };
@@ -107,11 +107,11 @@ exports.getAlljob = async (req, res) => {
 exports.applyJob = async (req, res) => {
     console.log("form submission",req.body)
     try {
-        const { name, email,date, noticeperiod,contactNumber,currentCTC, expectedCTC,currentOrganization, selectedJobId } = req.body;
+        const { name, email,date, noticeperiod,currentExperience,contactNumber,currentCTC, expectedCTC,currentOrganization, selectedJobId } = req.body;
         const file = req.file.path; // File from multer middleware
 
         // Check if all fields are present
-        if (!name || !email || !date ||  !noticeperiod || !file || !contactNumber || !currentCTC || !expectedCTC || !currentOrganization ||  !selectedJobId) {
+        if (!name || !email || !date ||  !noticeperiod || !currentExperience || !file || !contactNumber || !currentCTC || !expectedCTC || !currentOrganization ||  !selectedJobId) {
             return res.status(400).json({
                 message: "All fields are required",
             });
@@ -126,6 +126,7 @@ exports.applyJob = async (req, res) => {
             email,
             date,
             contactNumber,
+            currentExperience,
             currentCTC,
             expectedCTC,
             currentOrganization,
@@ -148,6 +149,7 @@ exports.applyJob = async (req, res) => {
                 email: applyData.email,
                 date: applyData.date,
                 contactNumber: applyData.ContactNumber,
+                currentExperience: applyData.currentExperience,
                 currentCTC: applyData.CurrentCTC,
                 expectedCTC: applyData.ExpectedCTC,
                 currentOrganization: applyData. CurrentOrganization,
@@ -165,23 +167,7 @@ exports.applyJob = async (req, res) => {
     }
 };
 
-// getallappliedjob
-// exports.getAllApplyJob = async (req, res) => {
-//     try {
-//         const allApplyJob = await jobApplyModel.find().populate('jobReference').sort({createdAt:-1});
 
-//         console.log("Fetched Jobs:", allApplyJob); 
-
-//         return res.status(200).json({
-//             message: 'Successfully retrieved all applied job data',
-//             data:allApplyJob});
-//     } catch (error) {
-//         return res.status(500).json({
-//             message: 'Internal server error',
-//             error: error.message,
-//         });
-//     }
-// };
 
 exports.getAllApplyJob = async (req, res) => {
     try {
@@ -336,8 +322,6 @@ exports.deleteAppliedJob = async (req, res) => {
             error: error.message
         })
     }
-
-
 }
 
 

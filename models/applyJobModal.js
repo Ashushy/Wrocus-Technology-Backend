@@ -22,12 +22,14 @@ const applyJobSchema = new mongoose.Schema({
         type: String,
         required:true
     },
-
+    currentExperience: {
+        type: String,
+        required:true
+    },
     currentCTC: {
             type: String,
             required: true
     },
-    
     expectedCTC: {
         type: String,
         required: true
