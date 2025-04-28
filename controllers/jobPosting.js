@@ -103,6 +103,38 @@ exports.getAlljob = async (req, res) => {
     }
 };
 
+// to get single job 
+
+exports.getOneJob = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        // Find job posting by ID
+        const job = await JobPosting.findById(id);
+
+        // Check if job exists
+        if (!job) {
+            return res.status(404).json({
+                message: "Job not found",
+            });
+        }
+
+        // Return job data
+        return res.status(200).json({
+            message: "Job fetched successfully",
+            jobData: job,
+        });
+    } catch (error) {
+        console.error(error);
+
+        // Handle invalid ObjectId or other errors
+        return res.status(500).json({
+            message: "Internal server error",
+        });
+    }
+};
+
+
 //apply job
 exports.applyJob = async (req, res) => {
     console.log("form submission",req.body)
@@ -205,11 +237,61 @@ exports.getAllApplyJob = async (req, res) => {
 
 
 //update job
+// exports.updateJobPost = async (req, res) => {
+//     try {
+//         const { id } = req.params;
+//         const {
+//             jobtitle,
+//             jobdescription,
+//             location,
+//             jobtype,
+//             salary,
+//             company,
+//             email,
+//             applicationdeadline,
+//             skill,
+//             experience,
+//             jobcategory,
+//             benefits
+//         } = req.body;
+
+//         // Find and update the job post by ID with the new data from req.body
+//         const updatedJobPost = await JobPosting.findByIdAndUpdate(id,
+//             {
+//                 job_title: jobtitle,
+//                 job_description: jobdescription,
+//                 location,
+//                 job_type: jobtype,
+//                 salary,
+//                 company,
+//                 contact_email: email,
+//                 application_deadline: applicationdeadline,
+//                 skill,
+//                 experience_level: experience,
+//                 job_category: jobcategory,
+//                 benefit: benefits
+//             },
+
+//             { new: true });
+
+//         // Check if the job post was found
+//         if (!updatedJobPost) {
+//             return res.status(404).json({ message: "Job post not found" });
+//         }
+
+//         // Send the updated job post in the response
+//         res.status(200).json(updatedJobPost);
+//     } catch (error) {
+//         // Handle errors during the update process
+//         res.status(500).json({ message: "Error updating job post", error });
+//     }
+// };
+
 exports.updateJobPost = async (req, res) => {
     try {
         const { id } = req.params;
         const {
-            jobtitle,
+            job_title,
             jobdescription,
             location,
             jobtype,
@@ -223,10 +305,10 @@ exports.updateJobPost = async (req, res) => {
             benefits
         } = req.body;
 
-        // Find and update the job post by ID with the new data from req.body
-        const updatedJobPost = await JobPosting.findByIdAndUpdate(id,
+        const updatedJobPost = await JobPosting.findByIdAndUpdate(
+            id,
             {
-                job_title: jobtitle,
+                job_title: job_title,
                 job_description: jobdescription,
                 location,
                 job_type: jobtype,
@@ -239,21 +321,30 @@ exports.updateJobPost = async (req, res) => {
                 job_category: jobcategory,
                 benefit: benefits
             },
+            {
+                new: true,
+                runValidators: true // enforce schema validation
+            }
+        );
 
-            { new: true });
-
-        // Check if the job post was found
         if (!updatedJobPost) {
             return res.status(404).json({ message: "Job post not found" });
         }
 
-        // Send the updated job post in the response
-        res.status(200).json(updatedJobPost);
+        return res.status(200).json({
+            message: "Job post updated successfully",
+            jobData: updatedJobPost
+        });
+
     } catch (error) {
-        // Handle errors during the update process
-        res.status(500).json({ message: "Error updating job post", error });
+        console.error(error);
+        return res.status(500).json({
+            message: "Error updating job post",
+            error: error.message
+        });
     }
 };
+
 
 //delete job
 exports.deleteJobPost = async (req, res) => {
